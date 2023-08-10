@@ -16,6 +16,17 @@ pipeline {
                 sh 'mvn clean deploy'
                  echo "----------- build complted ----------"
             }
-        }     
-    }    
+        }
+        
+        stage('SonarQube analysis') {
+            environment {
+                scannerHome = tool 'kube-sonar-scanner'
+            }
+            steps {
+                withSonarQubeEnv('kube-sonarqube-server') { // If you have configured more than one global server connection, you can specify its name
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
+    }       
 }
